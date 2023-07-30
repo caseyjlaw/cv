@@ -1,0 +1,772 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% Simple LaTeX CV Template %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Don't like 10pt? Try 11pt or 12pt
+\documentclass[11pt]{article}
+\RequirePackage[T1]{fontenc}
+
+% This is a helpful package that puts math inside length specifications
+\usepackage{calc}
+\usepackage{cite}
+
+% This package helps LaTeX auto-hyphenate hyphenated words if you use
+% special hyphens. For example, bio\-/mimicry will properly hyphenate
+% ``mimicry'' if necessary.
+\usepackage[shortcuts]{extdash}
+
+% Layout: Puts the section titles on left side of page
+\reversemarginpar
+
+%% Use these lines for letter-sized paper
+\usepackage[paper=letterpaper,
+            %includefoot, % Uncomment to put page number above margin
+            marginparwidth=1.2in,     % Length of section titles
+            marginparsep=.05in,       % Space between titles and text
+            margin=1in,               % 1 inch margins
+            includemp]{geometry}
+
+%% More layout: Get rid of indenting throughout entire document
+\setlength{\parindent}{0in}
+
+% Provides special list environments and macros to create new ones
+\usepackage[shortlabels]{enumitem}
+
+% Simpler bibsections for CV sections
+% (thanks to natbib for inspiration)
+%
+% * For lists of references with hanging indents and no numbers:
+%
+%   \begin{bibsection}
+%       \item ...
+%   \end{bibsection}
+%
+% * For numbered lists of references (with hanging indents):
+%
+%   \begin{bibenum}
+%       \item ...
+%   \end{bibenum}
+%
+%   Note that bibenum numbers continuously throughout. To reset the
+%   counter, use
+%
+%   \restartlist{bibenum}
+%
+%   at the place where you want the numbering to reset.
+
+\makeatletter
+\newlength{\bibhang}
+\setlength{\bibhang}{1em}
+\newlength{\bibsep}
+ {\@listi \global\bibsep\itemsep \global\advance\bibsep by\parsep}
+\newlist{bibsection}{itemize}{3}
+\setlist[bibsection]{label=,leftmargin=\bibhang,%
+        itemindent=-\bibhang,
+        itemsep=\bibsep,parsep=\z@,partopsep=0pt,
+        topsep=0pt}
+\newlist{bibenum}{enumerate}{3}
+\setlist[bibenum]{label=[\arabic*],resume,leftmargin={\bibhang+\widthof{[999]}},%
+        itemindent=-\bibhang,
+        itemsep=\bibsep,parsep=\z@,partopsep=0pt,
+        topsep=0pt}
+\let\oldendbibenum\endbibenum
+\def\endbibenum{\oldendbibenum\vspace{-.6\baselineskip}}
+\let\oldendbibsection\endbibsection
+\def\endbibsection{\oldendbibsection\vspace{-.6\baselineskip}}
+\makeatother
+
+%% Reference the last page in the page number
+%
+% NOTE: comment the +LP line and uncomment the -LP line to have page
+%       numbers without the ``of ##'' last page reference)
+%
+% NOTE: uncomment the \pagestyle{empty} line to get rid of all page
+%       numbers (make sure includefoot is commented out above)
+%
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+%\pagestyle{empty}      % Uncomment this to get rid of page numbers
+\fancyhf{}\renewcommand{\headrulewidth}{0pt}
+\fancyfootoffset{\marginparsep+\marginparwidth}
+\newlength{\footpageshift}
+\setlength{\footpageshift}
+          {0.5\textwidth+0.5\marginparsep+0.5\marginparwidth-2in}
+\lfoot{\hspace{\footpageshift}%
+       \parbox{4in}{\, \hfill %
+                    \arabic{page} of \protect\pageref*{LastPage} % +LP
+%                    \arabic{page}                               % -LP
+                    \hfill \,}}
+
+% Finally, give us PDF bookmarks
+\usepackage{color,hyperref}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.3}
+\hypersetup{colorlinks,breaklinks,
+            linkcolor=darkblue,urlcolor=darkblue,
+            anchorcolor=darkblue,citecolor=darkblue}
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% HEADING AT TOP OF CURRICULUM VITAE
+
+% The title (name) with a horizontal rule under it
+% (optional argument typesets an object right-justified across from name
+%  as well)
+%
+% Usage: \makeheading{name}
+%        OR
+%        \makeheading[right_object]{name}
+%
+% Place at top of document. It should be the first thing.
+% If ``right_object'' is provided in the square-braced optional
+% argument, it will be right justified on the same line as ``name'' at
+% the top of the CV. For example:
+%
+%       \makeheading[\emph{Curriculum vitae}]{Your Name}
+%
+% will put an emphasized ``Curriculum vitae'' at the top of the document
+% as a title. Likewise, a picture could be included:
+%
+%   \makeheading[{\includegraphics[height=1.5in]{my_picture}}]{Your Name}
+%
+% the picture will be flush right across from the name. For this example
+% to work, make sure the extra set of curly braces is included. Also
+% makes ure that \usepackage{graphicx} is somewhere in the preamble.
+\newcommand{\makeheading}[2][]%
+        {\hspace*{-\marginparsep minus \marginparwidth}%
+         \begin{minipage}[t]{\textwidth+\marginparwidth+\marginparsep}%
+             {\large \bfseries #2 \hfill #1}\\[-0.15\baselineskip]%
+                 \rule{\columnwidth}{1pt}%
+         \end{minipage}}
+
+%%% SECTION HEADINGS
+
+% The section headings. Flush left in small caps down pseudo-margin.
+%
+% Usage: \section{section name}
+\renewcommand{\section}[1]{\pagebreak[3]%
+    \vspace{1.3\baselineskip}%
+    \phantomsection\addcontentsline{toc}{section}{#1}%
+    \noindent\llap{\scshape\smash{\parbox[t]{\marginparwidth}{\hyphenpenalty=10000\raggedright #1}}}%
+    \vspace{-\baselineskip}\par}
+
+%%% LISTS
+
+% This macro alters a list by removing some of the space that follows the list
+% (is used by lists below)
+\newcommand*\fixendlist[1]{%
+    \expandafter\let\csname preFixEndListend#1\expandafter\endcsname\csname end#1\endcsname
+    \expandafter\def\csname end#1\endcsname{\csname preFixEndListend#1\endcsname\vspace{-0.6\baselineskip}}}
+
+% These macros help ensure that items in outer-type lists do not get
+% separated from the next line by a page break
+% (they are used by lists below)
+\let\originalItem\item
+\newcommand*\fixouterlist[1]{%
+    \expandafter\let\csname preFixOuterList#1\expandafter\endcsname\csname #1\endcsname
+    \expandafter\def\csname #1\endcsname{\let\oldItem\item\def\item{\pagebreak[2]\oldItem}\csname preFixOuterList#1\endcsname}
+    \expandafter\let\csname preFixOuterListend#1\expandafter\endcsname\csname end#1\endcsname
+    \expandafter\def\csname end#1\endcsname{\let\item\oldItem\csname preFixOuterListend#1\endcsname}}
+\newcommand*\fixinnerlist[1]{%
+    \expandafter\let\csname preFixInnerList#1\expandafter\endcsname\csname #1\endcsname
+    \expandafter\def\csname #1\endcsname{\let\oldItem\item\let\item\originalItem\csname preFixInnerList#1\endcsname}
+    \expandafter\let\csname preFixInnerListend#1\expandafter\endcsname\csname end#1\endcsname
+    \expandafter\def\csname end#1\endcsname{\csname preFixInnerListend#1\endcsname\let\item\oldItem}}
+
+% An itemize-style list with lots of space between items
+%
+% Usage:
+%   \begin{outerlist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{outerlist}
+\newlist{outerlist}{itemize}{3}
+    \setlist[outerlist]{label=\enskip\textbullet,leftmargin=*}
+    \fixendlist{outerlist}
+    \fixouterlist{outerlist}
+
+% An environment IDENTICAL to outerlist that has better pre-list spacing
+% when used as the first thing in a \section
+%
+% Usage:
+%   \begin{lonelist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{lonelist}
+\newlist{lonelist}{itemize}{3}
+    \setlist[lonelist]{label=\enskip\textbullet,leftmargin=*,partopsep=0pt,topsep=0pt}
+    \fixendlist{lonelist}
+    \fixouterlist{lonelist}
+
+% An itemize-style list with little space between items
+%
+% Usage:
+%   \begin{innerlist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{innerlist}
+\newlist{innerlist}{itemize}{3}
+    \setlist[innerlist]{label=\enskip\textbullet,leftmargin=*,parsep=0pt,itemsep=0pt,topsep=0pt,partopsep=0pt}
+    \fixinnerlist{innerlist}
+
+% An environment IDENTICAL to innerlist that has better pre-list spacing
+% when used as the first thing in a \section
+%
+% Usage:
+%   \begin{loneinnerlist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{loneinnerlist}
+\newlist{loneinnerlist}{itemize}{3}
+    \setlist[loneinnerlist]{label=\enskip\textbullet,leftmargin=*,parsep=0pt,itemsep=0pt,topsep=0pt,partopsep=0pt}
+    \fixendlist{loneinnerlist}
+    \fixinnerlist{loneinnerlist}
+
+%%% EXTRA SPACE
+
+% To add some paragraph space between lines.
+% This also tells LaTeX to preferably break a page on one of these gaps
+% if there is a needed pagebreak nearby.
+\newcommand{\blankline}{\quad\pagebreak[3]}
+\newcommand{\halfblankline}{\quad\vspace{-0.5\baselineskip}\pagebreak[3]}
+
+%%% FORMATTING MACROS
+
+% Provides a linked \doi{#1} that links doi:#1 to http://dx.doi.org/#1
+\usepackage{doi}
+% To change the text before the DOI, adjust this command
+%\renewcommand\doitext{doi:}
+
+% Provides a linked \url{#1} that doesn't require escape characters
+\usepackage{url}
+
+% You can adjust the style \url{} uses here:
+% (options are: same, rm, sf, tt; defaults to tt)
+\urlstyle{same}
+
+% For \email{ADDRESS}, links ADDRESS to the url mailto:ADDRESS
+% (uncomment to typeset the e\-/mail address in typewriter font;
+%  otherwise, will be typeset in the \urlstyle above)
+%\DeclareUrlCommand\emaillink{\urlstyle{tt}}
+\providecommand*\emaillink[1]{\nolinkurl{#1}}
+\providecommand*\email[1]{\href{mailto:#1}{\emaillink{#1}}}
+
+\providecommand\BibTeX{{B\kern-.05em{\sc i\kern-.025em b}\kern-.08em \TeX}}
+\providecommand\Matlab{\textsc{Matlab}}
+
+% Custom hyphenation rules for words that LaTeX has trouble with
+%\hyphenation{bio-mim-ic-ry bio-in-spi-ra-tion re-us-a-ble pro-vid-er Media-Wiki}
+
+%\usepackage{bibentry}
+%
+%\usepackage{hanging}
+%\newcommand\publication[1]{%
+%    \smallskip\par\hangpara{1.5em}{1}\bibentry{#1}\smallskip
+%}
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Begin CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%\nobibliography{fasttransients.bib}
+%\bibliographystyle{apacite}
+
+\makeheading{Dr.~Casey J.~Law}
+
+\section{Contact Information}
+
+% NOTE: Mind where the & separators and \\ breaks are in the following
+%       table. Table is one row made up of three parboxes. The left
+%       parbox has address info, the middle parbox has a vertical bar,
+%       and the right parbox has phone and electronic contact
+%       information.
+%
+% MACROS: \rcollength is the width of the right column of the table
+%             (adjust it to your liking; default is 1.85in).
+%         \spacewidth is width of area between left and right boxes.
+%
+\newlength{\rcollength}\setlength{\rcollength}{1.85in}%
+\newlength{\spacewidth}\setlength{\spacewidth}{20pt}
+%
+\begin{tabular}[t]{@{}p{\textwidth-\rcollength-\spacewidth}@{}p{\spacewidth}@{}p{\rcollength}}%
+
+% Address box
+\parbox{\textwidth-\rcollength-\spacewidth}{%
+Research Scientist \\
+Cahill Center for Astronomy and Astrophysics, \\
+Owens Valley Radio Observatory, \\
+California Institute of Technology \\
+Pasadena, CA 91125}
+
+&
+% Uncomment to add a vertical bar in middle of contact information
+%{\vrule width 0.5pt}
+\parbox[m][5\baselineskip]{\spacewidth}{} &
+
+% Non-snail-mail contact information
+\parbox{\rcollength}{%
++1-510-859-3636 \\
+claw@astro.caltech.edu}
+
+\end{tabular}
+
+%%
+%% In modern CV's, it seems like ``Objective'' is frowned upon. Instead,
+%% incorporate it into a well-constructed cover letter. The ``More
+%% information'' can go at the end of the CV, but it should not distract
+%% from the section giving references available to contact.
+%%
+%
+% \section{Objective}
+%
+% Placement in an academic position (i.e., faculty, postdoctoral, or
+% research scientist) that allows for advanced research in distributed
+% complex adaptive systems (i.e., modeling, analysis, design, and
+% verification) with a particular focus on the control of engineered
+% agents (e.g., for communications, control, software, electronics, and
+% sustainability) and the analysis of biological phenomena (e.g.,
+% self-organization, ecological rationality)
+% \begin{innerlist}
+% \item More information and auxiliary documents can be found at\\\url{http://www.tedpavlic.com/facjobsearch/}
+% \end{innerlist}
+
+\section{Research Interests}
+
+\emph{Astrophysical transients}, fast radio bursts, algorithms and computing, surveys, radio interferometry
+
+\section{Education}
+
+\textbf{Northwestern University}, Evanston, IL
+\begin{outerlist}
+\item[] Ph.D., Astrophysics, 2007
+        \begin{innerlist}
+        \item Thesis: \emph{Surveys of the Galactic Center and the Nature of the Galactic Center Lobe}
+        \item Research Topics: Multiwavelength observational astronomy and Galactic astrophysics
+        \item Adviser: Farhad Yusef-Zadeh
+        \end{innerlist}
+\end{outerlist}
+
+\halfblankline
+
+\textbf{Boston University}, Boston, MA
+\begin{outerlist}
+\item[] M.A., Astronomy, 2000
+        \begin{innerlist}
+        \item Research Topics: Radio spectroscopy, optical photometry
+        \item Advisers: James Jackson, Ken Janes, Tereasa Brainerd
+        \end{innerlist}
+\end{outerlist}
+
+\halfblankline
+
+\textbf{University of Hawai`i, Manoa}, Honolulu, HI
+\begin{outerlist}
+\item[] B.S. with distinction, Physics, 1998
+        \begin{innerlist}
+        \item Research Topic: Observations of globular clusters
+        \item Advisor: James Heasley
+        \end{innerlist}
+\end{outerlist}
+
+\section{Employment}
+
+\textbf{Research Scientist} \hfill {July 2019 to present}
+
+\begin{innerlist}
+
+    \item[] Cahill Center for Astronomy and Astrophysics \& Owens Valley Radio Observatory,
+            Caltech
+    \begin{innerlist}
+      \item Supervisor: Gregg Hallinan
+      \item Software and Algorithms Lab lead and Data subsystem lead for DSA-2000 project
+%      \item Radio transient astrophysics
+%      \item Development and operations of OVRO-LWA, DSA-110, and DSA-2000
+    \end{innerlist}
+
+\end{innerlist}
+
+\halfblankline
+
+\textbf{Assistant Project Astronomer} \hfill {December 2011 to June 2019}
+
+\textbf{Postdoctoral Fellow} \hfill {January 2009 to November 2011}
+\begin{innerlist}
+
+    \item[] Radio Astronomy Lab,
+            UC Berkeley
+    \begin{innerlist}
+      \item Supervisor: Geoff Bower and Carl Heiles
+      \item PI of \emph{realfast} instrument at the Very Large Array
+%      \item Radio transients and polarimetry 
+%      \item Commissioning of the Allen Telescope Array, Karoo Array Telescope, Jansky Very Large Array
+    \end{innerlist}
+
+\end{innerlist}
+
+\halfblankline
+
+\textbf{Postdoctoral Fellow} \hfill {July 2006 to December 2008}
+\begin{innerlist}
+
+    \item[] Department of Astronomy,
+            University of Amsterdam
+    \begin{innerlist}
+      \item Supervisor: Ralph Wijers
+%      \item Radio transient astrophysics
+      \item Commissioning of the Low Frequency Array (LOFAR)
+    \end{innerlist}
+
+\end{innerlist}
+
+\halfblankline
+
+\textbf{Astrophysicist} \hfill {September 2000 to June 2002}
+\begin{innerlist}
+
+    \item[] Harvard-Smithsonian Center for Astrophysics
+    \begin{innerlist}
+      \item Support astronomer for the \emph{Chandra} X-ray Observatory
+%      \item Tested, documented, and developed code for the CIAO software package
+%      \item Observational X-ray astronomy research
+    \end{innerlist}
+
+\end{innerlist}
+
+\section{Select Publications}
+
+\begin{enumerate}
+
+    \item ``Deep Synoptic Array Science: First FRB and Host Galaxy Catalog'', Law et al., 2023, AAS Journals, submitted
+
+    \item ``Magnetic field reversal in the turbulent environment around a repeating fast radio burst'', Anna-Thomas, R. et al, 2023, Science, 380, 599
+
+    \item ``Deep Synoptic Array Science: A Massive Elliptical Host Among Two Galaxy-cluster Fast Radio Bursts'', Sharma, K. et al, 2023, ApJ, 950, 175
+
+    \item ``Deep Synoptic Array Science: Two Fast Radio Burst Sources in Massive Galaxy Clusters'', Connor, L. et al, 2023, ApJ, 949, 26
+
+    \item ``Deep Synoptic Array Science: Discovery of the Host Galaxy of FRB 20220912A'', Ravi, V. et al, 2023, ApJ, 949, 3
+
+    \item ``Deep Synoptic Array science: a 50 Mpc fast radio burst constrains the mass of the Milky Way circumgalactic medium'', Ravi, V. et al, 2023, AAS Journals, submitted
+
+    \item ``Characterizing the Fast Radio Burst Host Galaxy Population and its Connection to Transients in the Local and Extragalactic Universe'', Bhandari, S. et al, 2022, AJ, 163, 69
+
+    \item ``Late-time Evolution and Modeling of the Off-axis Gamma-Ray Burst Candidate FIRST J141918.9+394036'', Mooley, K. P. et al, 2022, ApJ, 924, 16
+
+    \item ``FIRST J153350.8+272729: The Radio Afterglow of a Decades-old Tidal Disruption Event'', Ravi, V. et al, 2022, ApJ, 925, 220
+
+    \item ``On the Fast Radio Burst and Persistent Radio Source Populations'', Law, C. J., Connor, L., \& Aggarwal, K., 2022, ApJ, 927, 55
+
+    \item ``A repeating fast radio burst associated with a persistent radio source'', Niu, C.-H. et al, 2022, Nature, 606, 873
+
+    \item ``The host galaxy and persistent radio counterpart of FRB 20201124A'', Ravi V. et al, 2022, MNRAS, 513, 982
+
+    \item ``A repeating fast radio burst source in a globular cluster'', Kirsten, F. et al, 2022, Nature, 602, 585
+
+    \item ``Robust Assessment of Clustering Methods for Fast Radio Transient Candidates'', Aggarwal, K, et al, 2021, 914, 53
+
+    \item ``A Distant Fast Radio Burst Associated with Its Host Galaxy by the Very Large Array'', Law, C. J. et al. 2020, ApJ, 899, 161
+
+    \item ``A Data-driven Technique Using Millisecond Transients to Measure the Milky Way Halo'' Platts, E. et al. 2020, ApJ, 859, 49
+
+    \item ``The Karl G. Jansky Very Large Array Sky Survey (VLASS). Science Case and Survey Design'' Lacy, M. et al, 2020, PASP, 132
+
+    \item ``A repeating fast radio burst source localized to a nearby spiral galaxy'' Marcote, B. et al 2020, Nature, 577, 190
+
+    \item ``A Search for Late-time Radio Emission and Fast Radio Bursts from Superluminous Supernovae'' Law, C. J. et al 2019, ApJ, 886, 24
+  
+    \item ``Discovery of the Luminous, Decades-long, Extragalactic Radio Transient FIRST J141918.9+394036'', Law, C. J. et al. 2018, ApJ, 866, L22
+
+    \item ``Fast Radio Burst 121102 Pulse Detection and Periodicity: A Machine Learning Approach'', Zhang, Y. G. et al 2018, ApJ, 866, 149
+
+    \item ``Serendipitous Fast Transient Science with the ngVLA'', Law, C. J. et al. 2018, "Science with a Next-Generation VLA", ed. E. J. Murphy (ASP, San Francisco, CA)
+
+    \item ``Highest Frequency Detection of FRB 121102 at 4-8 GHz Using the Breakthrough Listen Digital Backend at the Green Bank Telescope'', Gajjar, V. et al. 2018, ApJ, 863, 2
+
+    \item ``An extreme magneto-ionic environment associated with the fast radio burst source FRB 121102'', Michilli, D. et al., 2018, Nature, 553, 182
+    
+    \item ``The Nonhomogeneous Poisson Process for Fast Radio Burst Rates'', Lawrence, E. 2017, AJ, 154, 117
+    
+    \item ``A direct localization of a fast radio burst and its host'', Chatterjee, S. et al 2017, Nature, 541, 58
+    
+    \item ``The Repeating Fast Radio Burst FRB 121102 as Seen on Milliarcsecond Angular Scales'', Marcote, B. et al 2017, ApJ, 834, 8
+
+    \item ``The Host Galaxy and Redshift of the Repeating Fast Radio Burst FRB 121102'', Tendulkar, S. et al, 2017, ApJ, 834, 7
+
+    \item ``realfast: Real-time, Commensal Fast Transient Surveys with the Very Large Array'', Law, C.J. et al 2018, ApJS, 236, 8
+
+    \item ``A Multi-telescope Campaign on FRB 121102: Implications for the FRB Population'', Law, C.J. et al, 2017, ApJ, 850, 76
+
+    \item ``LOFAR MSSS: detection of a low-frequency radio transient in 400 h of monitoring of the North Celestial Pole'', Stewart et al 2016, MNRAS, 46, 2321
+
+    \item ``A Millisecond Interferometric Search for Fast Radio Bursts with the Very Large Array'', Law, C. J. et al 2015, ApJ, 807, 16
+
+    \item ``The LOFAR Transients Pipeline'', Swinbank, J. D. et al, 2015, A\&C 11, 25
+
+    \item ``The LOFAR pilot surveys for pulsars and fast radio transients'', Coenen, T. et al 2014, A\&A, 570, 60
+
+    \item ``LOFAR: The LOw-Frequency ARray'', van Haarlem, M. et al 2013, A\&A, 556, 2
+
+    \item ``The RRAT Trap: Interferometric Localization of Radio Pulses from J0628+0909'', Law, C. J. et al 2012, ApJ, 760, 124
+
+    \item ``All Transients, All the Time: Real-time Radio Transient Detection with Interferometric Closure Quantities'',  Law, C. J. et al 2012, ApJ, 749, 143
+
+    \item ``Millisecond Imaging of Radio Transients with the Pocket Correlator'',  Law, C. J. et al 2011, ApJ, 742, 12
+
+    \item ``Spectropolarimetry with the Allen Telescope Array:  Faraday Rotation toward Bright Polarized Radio Galaxies'',  Law, C. J. et al 2011, ApJ, 728, 57
+
+    \item ``A Constraint on the Organization of the Galactic Center Magnetic Field Using Rotation Measures'',  Law, C. J. et al 2011, ApJ, 731, 36
+
+    \item ``Observing pulsars and fast transients with LOFAR'',  Stappers, B. W. et al 2011, A\&A, 530, 80
+
+    \item ``Wild at Heart: The Particle Astrophysics of the Galactic Centre'',  Crocker, R. M. et al., 2011, MNRAS, 413, 763
+
+    \item ``The Allen Telescope Array Pi GHz Sky Survey I. Survey Description and Static Catalog Results for the Bootes Field'',  Bower, G. C. et al., 2010, ApJ, 725, 1792  
+
+    \item ``The Allen Telescope Array Twenty-centimeter Survey -- A 690 sq-deg, 12 Epoch Radio Data Set. I. Catalog and Long-duration Transient Statistics'',  Croft, S. et al. 2010, ApJ, 719, 45
+
+    \item ``A Multiwavelength View of a Mass Outflow from the Galactic Center'',  Law, C. J. 2010, ApJ, 708, 474
+
+    \item ``Green Bank Telescope Multiwavelength Survey of the Galactic Center Region'',  Law, C. J., et al. 2008, ApJS, 177, 255
+
+    \item ``X-Ray Observations of Stellar Clusters Near the Galactic Center'',  Law, C. \& Yusef-Zadeh, F. 2004, ApJ, 611, 858
+
+    \item ``Detection of X-Ray Emission from the Arches Cluster near the Galactic Center'',  Yusef-Zadeh, F., Law, C., et al. 2002, ApJ, 570, 665
+\end{enumerate}
+
+\section{Professional Honors and Service}
+
+\begin{bibsection}
+
+    \item Reviewer for ISF, SARAO (MeerKAT), NCRA, FAST, NRAO, NASA and NSF, 2013 -- present
+
+    \item Referee for the AAS Journals, MNRAS, Astronomy \& Computing, PASP, and New Astronomy, 2006 -- present
+
+    \item Chair, Natural Resources and Environmental Commission, City of South Pasadena, 2020 -- present
+
+    \item Chair, LOC, ``Scientific Frontiers and Synergies for the DSA-2000 Radio Camera'', 2023
+
+    \item SOC member, IAU Symposium 369, ``The Dawn of Cosmology \& Multi-Messenger Studies with Fast Radio Bursts'', 2022
+
+    \item Co-organizer, 3rd URSI Atlantic Radio Science meeting, Session on Techniques of Time-Domain Astrophysics, 2022
+
+    \item Mentor and Judge, Student Faculty Programs, Caltech, 2020 -- present
+
+    \item Judge, AAS Chambliss poster competition, 2020 -- present
+
+    \item Member, NRAO Users Committee, 2019 -- 2022  
+
+    \item Member, VLA Sky Survey Survey Science Group, 2014 -- 2022
+
+    \item Editor, Astronomy and Computing, 2018 -- 2019
+
+    \item Visitor, Dunlap Institute for Astronomy and Astrophysics, University of Toronto, July 2018
+
+    \item External Review Committee, CHIME/FRB project, 2017 -- 2018
+
+    \item Organizer, Radio Astronomy Lab Hack day, 2017
+    
+    \item Organizer, Berkeley Astronomy arxiv coffee, 2017 -- 2019
+    
+    \item Member, Berkeley Institute for Data Science, 2014 -- 2019
+
+    \item Jansky Very Large Array Resident Observer, 2012
+
+    \item Chair (LOC) and member (SOC) for ``LOFAR and the Transient Radio Sky'', 2008
+
+    \item Huang Fellowship at Northwestern University, 2002 -- 2003
+
+    \item Two Presidential Fellowships (Research and Teaching) at Boston University, 1998 -- 2000
+
+    \item Four merit-based tuition waivers from the Department of Physics at the University of Hawai`i, 1995 -- 1998
+
+    \item Hawai`i Space Grant Fellowship, 1997
+
+\end{bibsection}
+
+\section{Teaching and Outreach}
+
+\textbf{Caltech}, Pasadena, CA
+\begin{outerlist}
+\item[] \textit{Student Advising}
+  \hfill \textbf{2019 -- 2021}
+    \begin{innerlist}
+      \item Caltech programs: Summer Undergraduate Research Fellowship, Freshman Summer Research Institute, and the Summer Research Consortium
+      \item Graduate students: \textbf{Kshitij Aggarwal} (co-advisor and thesis committee; West Virginia Univ.), \textbf{Wael Farah} (thesis examiner; Swinburne Univ.), \textbf{Emma Platts} (Kavli project co-mentor; Univ. of Cape Town)
+      \item Undergraduates \textbf{Carlos Ayala}, \textbf{Tyrone McNichols}, \textbf{Jerome (Johnny) Seebeck}, \textbf{Evan Portnoi}, \textbf{Rey Squillace}, \textbf{Ethan Alderete} \\
+%      \item Mentored postdocs...
+      Co-advisors: Gregg Hallinan, Vikram Ravi
+    \end{innerlist}
+
+\item[] \textit{Lecturing and Volunteering}
+    \hfill \textbf{2019 -- 2022}
+    \begin{innerlist}
+        \item Palomar Greenways Lecture Series, 2023
+        \item OVRO Astronomy Lecture Series -- Lecturer, 2022
+        \item Arroyo Vista Elementary, South Pasadena -- Science Night co-organizer, 2021-2022
+    \end{innerlist}
+\end{outerlist}
+
+\halfblankline
+
+\textbf{UC Berkeley}, Berkeley, CA
+\begin{outerlist}
+\item[] \textit{Student Advising}
+    \hfill \textbf{2009 -- 2019}
+    \begin{innerlist}
+      \item Graduate students: \textbf{Peter Williams}, \textbf{Chat Hull}, and \textbf{James McBride} \\
+%        Mr.\ Williams, Mr.\ Hull, and Mr.\ McBride used data from the Allen Telescope Array to study radio transients and the polarimetric properties of galaxies.
+        Co-advisors: Carl Heiles and Geoff Bower %, 2008 -- 2012.
+      \item Undergraduates: \textbf{Luis Chinchilla-Garcia} (UC LEADS prgram), \textbf{Bridget Andersen}, \textbf{Sabrina Berger}, \textbf{Sanyum Channa}, \textbf{Andrew Halle}, \textbf{Jun Tan}, \textbf{Yawen Sun}, \textbf{Kyle Blanchard}, and \textbf{Phillip Sells}  %\\
+%        Students have worked with realfast data analysis, FRB science, the NERSC supercomputer, AWS cloud computing, and radio interferometric search software.
+%        2012 -- 2019.
+      \item Breakthrough Listen intern program
+%        Lectured and supervised individual projects. 2016 -- 2018.
+     \end{innerlist}
+
+\item[] \textit{Lecturing and Volunteering}
+    \hfill \textbf{2009 -- 2019}
+    \begin{innerlist}
+        \item Prison University Project -- Five years as lead math tutor for college-level curriculum in San Quentin State Prison
+        \item Science@Cal -- Six years as co-organizer of monthly lecture series and participation in annual ``Cal Day'' events
+        \item Open Oakland -- Participated in projects related to air quality, open software, and civic hacking
+        \item UCB Astronomy 290 -- Two guest lectures in graduate course on department research
+        \item Franklin Elementary, Oakland, California -- Two visits to present astronomy concepts to 3rd graders
+        \item Mount Diablo Astronomical Society -- Guest lecture on radio transients
+        \item Splunk Inc. -- Guest lecture on radio transients at Splunk Science Society lecture series
+        \item Cal-Bridge -- Co-organized workshop for Python in Astronomy for CSU-UC bridge program
+    \end{innerlist}
+
+\end{outerlist}
+
+\halfblankline
+
+\textbf{University of Amsterdam}, Amsterdam, The Netherlands
+\begin{outerlist}
+
+\item[] \textit{Student Advising}
+    \hfill \textbf{2006 -- 2007}
+    \begin{innerlist}
+       \item \textbf{Thijs Coenen} \\
+%        Master's student at the University of Amsterdam building a machine learning algorithm for the automatic classification of radio transients detected by LOFAR.     2005.
+        Co-adviser: Ralph Wijers.
+     \end{innerlist}
+\end{outerlist}
+
+\halfblankline
+
+\textbf{Northwestern University}, Evanston, IL
+\begin{outerlist}
+
+\item[] \textit{Teaching Assistant} 
+    \hfill \textbf{2004}
+    \begin{innerlist}
+        \item Taught weekly physics discussion session with roughly 100 students
+    \end{innerlist}
+
+\item[] \textit{Observatory Host} 
+    \hfill \textbf{2003 -- 2006}
+    \begin{innerlist}
+        \item Led monthly open night tours at Dearborn Observatory
+    \end{innerlist}
+    
+\end{outerlist}
+
+\halfblankline
+
+\textbf{Boston University}, Boston, MA
+\begin{outerlist}
+
+\item[] \textit{Teaching Assistant} 
+    \hfill \textbf{1999 -- 2000}
+    \begin{innerlist}
+        \item Taught four astronomy lab sections per semester (including night labs)
+    \end{innerlist}
+\end{outerlist}
+
+\halfblankline
+
+\textbf{University of Hawaii at Manoa}, Honolulu, HI
+\begin{outerlist}
+\item[] \textit{Co-organizer}, Hawai`i Physics Olympics
+    \hfill \textbf{1996 -- 1998}
+    \begin{innerlist}
+        \item Helped organize annual, state-wide event for high school students
+        \item Designed events to test understanding of physical concepts
+    \end{innerlist}
+\end{outerlist}
+
+\begin{outerlist}
+\item[] \textit{Co-organizer}, Physics Tutoring
+    \hfill \textbf{1996 -- 1998}
+    \begin{innerlist}
+        \item Developed and led volunteer physics tutoring service for undergraduates
+    \end{innerlist}
+\end{outerlist}
+
+\section{Grants}
+
+\begin{bibsection}
+
+  \item Collaborator: Canadian Initiative for Radio Astronomy Data Analysis (CIRADA), Canada Foundation for Innovation, 2017
+
+  \item PI: Real-time, commensal transient detection at the VLA (\emph{realfast} project), NSF, Advanced Technology and Instrumentation grant, awarded 2016.
+
+  \item Senior staff: Anomaly detection with fast imaging radio interferometers. University of California Office of the President grant, awarded 2012.
+
+  \item Co-I: A Coherent Transient Detection System for SKA Pathfinders. University of Western Australia Collaboration grant, awarded 2012.
+
+  \item PI: Meeting of LOFAR and the Transient Radio Sky. NWO and NOVA (NL) collaboration support grants, awarded 2008.
+
+  \item PI: Development of a spatio-spectral analysis technique for X-ray data. \emph{Chandra} archival research grant, awarded 2003.
+
+\end{bibsection}
+
+
+\section{Software}
+\begin{enumerate}
+    \item ``rfpipe: Radio interferometric transient search pipeline'', Law, C. J. 2017, ASCL, 1710.002
+    
+    \item ``vysmaw: Fast visibility stream muncher'', Pokorny, M. \& Law, C. J. 2017, ASCL, 1710.001
+
+    \item ``rtpipe: Searching radio interferometry data for fast, dispersed transients'', Law, C. J. 2017, ASCL, 1706.002
+
+    \item ``tpipe: Searching radio interferometry data for fast, dispersed transients'', Law, C. J. 2016, ASCL, 1603.012
+\end{enumerate}
+
+%\section{Invited Talks}
+%
+%\begin{enumerate}
+%
+%    \item ``FRBs in the ngVLA Era'', Invited talk at ``Astrophysical Frontiers'' meeting, Portland, OR, July 2018
+%
+%    \item ``Magnetar Unification of FRBs'', Invited talk at FRB McGill Workshop, Montreal, QC, June 2017
+%
+%    \item ``Practical radio observing issues: interferometry'', Invited talk at ``Fast Radio Bursts: New Probes of Physics and Cosmology'', Aspen, CO, February 2017
+%
+%    \item ``realfast: Commensal Fast Transient Surveys with the VLA'', Seminar at NRAO, Socorro, NM, April 2016
+%
+%    \item ``Real-Time Commensal Fast Transient Searches with the VLA'' at "Hotwiring the Transient Universe IV'', Santa Barbara, CA, May 2015
+%
+%    \item ``Searching for Fast Radio Transients at 1 Terabyte per hour'', Seminar at NRAO Socorro, NM, March 2015
+%
+%    \item ``Searching for Fast Radio Transients at 1 Terabyte per hour''. Invited talk at ``Conference on Data Analysis (CODA 2014)'' in Santa Fe, NM, March 2014.
+%
+%    \item ``VLA Searches for Fast Radio Transients at 1 TB/hour''. Talk at ``Hotwiring the Transient Universe III'' in Santa Fe, NM, November 2013.
+%
+%    \item ``Real-Time Transient Detection with Interferometric Closure Quantities''. Talk at ``Interferometric Techniques for Impulsive Signals at Radio Frequencies'' at Ohio State University, April 2013.
+%
+%    \item ``Real-Time Radio Transient Detection with the VLA''. Seminar for LANL Statistics group, April 2012.
+%
+%    \item ``The VLA as a Millisecond Transient Survey Machine ''. Colloquium at NRAO Socorro, March 2012.
+%
+%    \item ``Radio Interferometric Searches for Millisecond Transients''. Colloquium at University of Cape Town, October 2011.
+%
+%    \item ``Breaking Through the Faraday Fog''. Colloquium at University of Sydney, April 2011.
+%
+%    \item ``Probing the Transient Radio Sky''. Colloquium at Southampton University, March 2010.
+%\end{enumerate}
+%\end{bibsection}
+
+\end{document}
